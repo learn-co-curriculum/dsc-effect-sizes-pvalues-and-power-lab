@@ -39,7 +39,7 @@ The analysis of this question leads to p-value calculation using some test stati
 
 As a first step, perform following three steps towards generating and visualizing samples for calculating our t-statistic
 
-1. Generate a sample size N=10 from a standard normal distribution (standard normal distribution has a mean 0 and sd of 1). Repeat this twice to simulate control and treatment group.
+1. Generate a sample size N=10 from a standard normal distribution (standard normal distribution has a mean 0 and sd of 1). Repeat this twice to simulate control and treatment group. 
 
 2. Scale up the samples to make them positive (with mean=0 and sd=1, there are bound to be negative values, shift mean to 2 instead)
 
@@ -54,14 +54,15 @@ import matplotlib.pyplot as plt
 from scipy import stats
 import seaborn as sb
 
+# sb.set_context('notebook', font_scale=1.25)
 ```
 
 
 ```python
 np.random.seed(82)
 # Use np.random.randn() to generate two different samples with size N = 10 with mean 2 
-a = None
-b = None
+a = np.random.randn(10) + 2 # +2 for shifting mean 
+b = np.random.randn(10) + 2
 ```
 
 Plot overlapping histograms for both samples for visual inspection.
@@ -70,6 +71,16 @@ Plot overlapping histograms for both samples for visual inspection.
 ```python
 # Plot overlapping histograms for a and b
 ```
+
+
+```python
+plt.hist(a, range=(-1, 6), bins=28, alpha=0.6);
+plt.hist(b, range=(-1, 6), bins=28, alpha=0.6);
+```
+
+
+![png](index_files/index_8_0.png)
+
 
 ## The t-test 
 
@@ -93,15 +104,26 @@ Let's write a function for calculatying Welch's t-statistic using two samples ge
 def welch_t(a, b):
     
     """ Calculate Welch's t statistic for two samples. """
-    
 
-    t = None
+    numerator = a.mean() - b.mean()
     
-    return t
+    # “ddof = Delta Degrees of Freedom”: the divisor used in the calculation is N - ddof, 
+    #  where N represents the number of elements. By default ddof is zero.
+    
+    denominator = np.sqrt(a.var(ddof=1)/a.size + b.var(ddof=1)/b.size)
+    
+    return numerator/denominator
 
 welch_t(a,b)
 # 0.41037468596041143
 ```
+
+
+
+
+    0.41037468596041143
+
+
 
 ### Degree of Freedom
 We also need to calculate the effective degrees of freedom using the formula:
@@ -118,12 +140,27 @@ Let's write a second function to calculate degree of freedom for above samples:
 def welch_df(a, b):
     
     """ Calculate the effective degrees of freedom for two samples. """
+    
+    s1 = a.var(ddof=1) 
+    s2 = b.var(ddof=1)
+    n1 = a.size
+    n2 = b.size
+    
+    numerator = (s1/n1 + s2/n2)**2
+    denominator = (s1/ n1)**2/(n1 - 1) + (s2/ n2)**2/(n2 - 1)
+    
+    return numerator/denominator
 
-    df = None
-    return df
 welch_df(a, b)
 # 17.86731104513857
 ```
+
+
+
+
+    17.86731104513857
+
+
 
 This result is for two samples (a,b) drawn from the same distribution. We are interested in distribution of t calculated from many samples from same distribution. **This will give us a distribution for comparison with t calculated from real data.**
 
@@ -161,17 +198,31 @@ fig, axes = plt.subplots(figsize=(10,3.5), ncols=4, sharey=True)
 for ax, M in zip(axes, [10, 100, 1000, 10000]):
 
     # Generate samples as arrays of shape M*N
+    a = np.random.randn(M, N)*sig + mu
+    b = np.random.randn(M, N)*sig + mu
 
     # Calculate a set of Welch t values from samples and plot a histogram
-
+    ts = np.array([welch_t(a_i, b_i) for a_i, b_i in zip(a, b)])
+    ax.hist(ts, range=(-4,4), bins=30, normed=True, label='Simulation')
+    
     # Calculate Welch df for plotting t distribution
-
+    df = welch_df(a[0,:], b[0,:])
+    x = np.linspace(-4, 4, 100)
+    ax.plot(x, stats.t.pdf(x, df), color='r', label='t-distribution')
 
     # Label the plot and axes
-    None
+    ax.set_title("M = {}".format(M))
+    ax.set_ylim(0, 1)
+    ax.set_xlabel("t-statistic")
+    _ = ax.legend()
+    axes[0].set_ylabel("p(t)")
     
-
+#fig.tight_layout()
 ```
+
+
+![png](index_files/index_16_0.png)
+
 
 We see that as the number of simulations gets larger, the distribution of t-statistics becomes closer and closer to the t-distribution with degrees of freedom calculated from the data. We can therefore use the t-distribution as an approximation of this process, as if we had actually performed the simulation infinite times. 
 
@@ -186,11 +237,29 @@ M = 10000 # Simulations
 mu, sig = 2, 1.5
 fig, axes = plt.subplots(figsize=(10,3.5), ncols=4, sharey=True)
 for ax, N in zip(axes, [2, 3, 5, 25]):
+    a = np.random.randn(M, N)*sig + mu
+    b = np.random.randn(M, N)*sig + mu
 
-        None
+    ts = np.array([welch_t(a_i, b_i) for a_i, b_i in zip(a, b)])
+    ax.hist(ts, range=(-4,4), bins=30, normed=True, label='Simulation')
+
+    df = welch_df(a[0,:], b[0,:])
+    x = np.linspace(-4, 4, 100)
+    ax.plot(x, stats.t.pdf(x, df), 'r', label='T distribution')
+    ax.plot(x, stats.norm.pdf(x), '--k', label='Normal distribution')
+    ax.set_title("N = {}".format(N))
+
+    ax.set_ylim(0, 1)
+    ax.set_xlabel("t-statistic")
+    _ = ax.legend()
+    axes[0].set_ylabel("p(t)")
     
 fig.tight_layout()
 ```
+
+
+![png](index_files/index_18_0.png)
+
 
 We can see that with increasing sample size, the t-distribution can be approximated by a normal distribution with zero mean and a variance of one. 
 
@@ -211,18 +280,44 @@ Build a scatter plot for control and treatment sample data generated above to vi
 
 
 ```python
-# Build a scatter plot to visualize control and treatment groups
+ig, ax = plt.subplots(figsize=(5,3))
+colors = sb.color_palette()
+ax.scatter(control, np.zeros(len(control)), c=colors[0], 
+            marker='|', s=400, linewidths=2, alpha=0.9)
+ax.scatter(treatment, np.ones(len(treatment)), color=colors[1],
+            marker='|', s=400, linewidths=2, alpha=0.9)
+ax.set_yticks([0, 1])
+ax.set_yticklabels(['control', 'treatment'])
+ax.set_xlabel('Sample value')
 ```
+
+
+
+
+    Text(0.5,0,'Sample value')
+
+
+
+
+![png](index_files/index_22_1.png)
+
 
 calculate welch-t and degree of freedom from these samples using functions developed earlier:
 
 
 ```python
-t = None
-df = None
+t = welch_t(treatment, control)
+df = welch_df(treatment, control)
 t,df
 # (1.325675538604432, 8.95372010421334)
 ```
+
+
+
+
+    (1.325675538604432, 8.95372010421334)
+
+
 
 The p-value is the probability we would see a value equal to or more extreme than t, under the null hypothesis. We can find this probability using the t-distribution with degrees of freedom. We shall use a one tailed test which suits our question i.e. drug has a positive effect.
 
@@ -234,8 +329,29 @@ Let's draw a plot to identify the area under curve. Your plot may look similar t
 
 
 ```python
-# Draw the above plot with calculated t value
+fig, ax = plt.subplots()
+x = np.linspace(-4, 4, 200)
+t_dist = stats.t.pdf(x, df)
+ax.plot(x, t_dist, label='t-distribution')
+ax.vlines(t, 0, 0.4, linestyles='--', color='k', 
+          label='t-statistic = {:.3f}'.format(t))
+ax.set_ylabel('pdf(t)')
+ax.set_xlabel('t')
+ax.set_ylim(0, 0.55)
+ax.legend(loc=9)
+ax.fill_between(x, 0, t_dist, where=(x >= t), color='grey', alpha=0.5)
 ```
+
+
+
+
+    <matplotlib.collections.PolyCollection at 0x27ae103d320>
+
+
+
+
+![png](index_files/index_26_1.png)
+
 
 The easiest way to calculate the shaded area is with the cumulative density function (CDF). 
 
@@ -243,10 +359,17 @@ The easiest way to calculate the shaded area is with the cumulative density func
 
 
 ```python
-p = None
+p = 1 - stats.t.cdf(t, df)
 p
-# 0.10888620005627703
+# 0.891113799943723
 ```
+
+
+
+
+    0.10888620005627703
+
+
 
 In this case, there is a 10% probability we would see t equal to or greater than what we saw from our data. We would not be able to reject the null hypothesis since p is not less than 0.05. 
 
@@ -259,20 +382,26 @@ def p_value(a, b):
 
     "Two-sided t-test for two samples a and b."
 
-    t = None
-    df = None
+    t = welch_t(a, b)
+    df = welch_df(a, b)
     
-    p = None
+    p = stats.t.cdf(-np.abs(t), df)
 
-    return t, p
+    return t, p+p
 ```
 
 
 ```python
 p_value(treatment, control)
-
 # (1.325675538604432, 0.21777240011255405)
 ```
+
+
+
+
+    (1.325675538604432, 0.21777240011255405)
+
+
 
 ### P_Value and Sample Size
 
@@ -287,7 +416,8 @@ def p_experiment(N, effect=1):
     control = np.random.randn(N)
     treatment = np.random.randn(N) + effect # Add effect to treatment group
     
-    t, p = None
+    t, p = p_value(control, treatment)
+
     return p
 
 ```
@@ -303,9 +433,9 @@ M = 1000 # Simulations
 
 for e_size in [0.2,0.5,1]:
     
-    p1 = None
-    p2 = None
-    p3 = None
+    p1 = np.array([sum(p_experiment(N, 0.2) for m in range(M))/M for N in Ns])
+    p2 = np.array([sum(p_experiment(N, 0.5) for m in range(M))/M for N in Ns])
+    p3 = np.array([sum(p_experiment(N, 1) for m in range(M))/M for N in Ns])
 ```
 
 For each chosen effect size i.e. .2, .5 and 1, show the effect of sample size on averaged p_value calculated above. An example plot may look like:
@@ -314,8 +444,26 @@ For each chosen effect size i.e. .2, .5 and 1, show the effect of sample size on
 
 ```python
 # Plot the graph similar to one shown above
+plt.plot(Ns, p1, label="Effect = 0.2")
+plt.plot(Ns, p2, label="Effect = 0.5")
+plt.plot(Ns, p3, label="Effect = 1")
+plt.hlines(0.05, 0, 300, linestyles='--', color='k')
+plt.ylabel("Average p-value")
+plt.xlabel("Sample size")
+plt.legend()
 
 ```
+
+
+
+
+    <matplotlib.legend.Legend at 0x27ae10d2eb8>
+
+
+
+
+![png](index_files/index_37_1.png)
+
 
 What we see here is that the p-value is a function of the sample size. This means that regardless of effect size, if you have a large amount of data, you will get a significant p-value. It also means that if you don't have a significant p-value, an effect isn't rejected, you just can't see it through the noise.
 
@@ -332,7 +480,20 @@ Use the effect sizes [0.1, 0.25, 0.5, 0.75] with a sample size N = 100 and numbe
 fig, axes = plt.subplots(figsize=(12,3), ncols=4, sharey=True)
 effect_sizes = [0.1, 0.25, 0.5, 0.75]
 
+effects = [[p_experiment(100, effect=e) for m in range(10000)] for e in effect_sizes]
+
+for i, ps in enumerate(effects):
+    ax = axes[i]
+    ax.hist(ps, range=(0, 0.5), bins=40, normed=True, alpha=0.7)
+    ax.vlines(0.05, 0, 100, color='k', linestyles='--')
+    ax.set_title('Effect = {}'.format(effect_sizes[i]))
+    ax.set_xlabel('p')
+    ax.set_ylim(0, 10)
 ```
+
+
+![png](index_files/index_40_0.png)
+
 
 It can be seen from the second set of simulations with an effect of 0.25, that If this same experiment were replicated in multiple labs in multiple locations, the chance that one particular experiment would find a statistically significant effect is about the same as getting heads from a coin flip. 
 
@@ -343,6 +504,12 @@ for i, each in enumerate(effects):
           format(effect_sizes[i], (np.array(each) < 0.05).mean()))
 
 ```
+
+    Effect = 0.1, P(p < 0.05): 0.1114
+    Effect = 0.25, P(p < 0.05): 0.4225
+    Effect = 0.5, P(p < 0.05): 0.9396
+    Effect = 0.75, P(p < 0.05): 0.9995
+
 
 ## Summary
 
