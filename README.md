@@ -1,5 +1,5 @@
 
-# Effect Size, P-Values and Power Lab
+# Effect Size, P-Values and Power - Lab
 
 ## Introduction 
 
@@ -12,7 +12,7 @@ You will be able to:
 * Plot visualisations to confirm the calculations and intuitions towards p_value and effect size. 
 * Explain how with a same effect size, we may see different p_values with increasing number of simulations. 
 
-### A Quick Re-cap
+## A Quick Re-cap
 
 What we have learnt from the labs and lessons so far is that scientific results must be presented with a level of uncertainty i.e. a confidence interval e.g. 
 
@@ -25,7 +25,7 @@ For reporting uncertainty, we used hypothesis testing to compare experimental re
 In this lab, we shall try to see this phenomenon in action. You would be required to use your existing statistical analysis and plotting abilities to visualise the effect of sample size and effect size on p-value calculation.
 
 
-### Example Scenario
+## Example Scenario
 
 Suppose you are running clinical tests for a new pharmaceutical drug. In such a situation, you would create a control (placebo) group and a treatment group for running independant t-test. 
 
