@@ -454,6 +454,17 @@ plt.legend()
 
 ```
 
+
+
+
+    <matplotlib.legend.Legend at 0x1a148cdb70>
+
+
+
+
+![png](index_files/index_37_1.png)
+
+
 What we see here is that the p-value is a function of the sample size. This means that regardless of effect size, if you have a large amount of data, you will get a significant p-value. It also means that if you don't have a significant p-value, an effect isn't rejected, you just can't see it through the noise.
 
 ### P_Value and Effect Size
@@ -480,6 +491,10 @@ for i, ps in enumerate(effects):
     ax.set_ylim(0, 10)
 ```
 
+
+![png](index_files/index_40_0.png)
+
+
 It can be seen from the second set of simulations with an effect of 0.25, that If this same experiment were replicated in multiple labs in multiple locations, the chance that one particular experiment would find a statistically significant effect is about the same as getting heads from a coin flip. 
 
 
@@ -489,6 +504,12 @@ for i, each in enumerate(effects):
           format(effect_sizes[i], (np.array(each) < 0.05).mean()))
 
 ```
+
+    Effect = 0.1, P(p < 0.05): 0.1114
+    Effect = 0.25, P(p < 0.05): 0.4225
+    Effect = 0.5, P(p < 0.05): 0.9396
+    Effect = 0.75, P(p < 0.05): 0.9995
+
 
 ## Summary
 
