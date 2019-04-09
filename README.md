@@ -168,7 +168,7 @@ This result is for two samples (a,b) drawn from the same distribution. We are in
 
 Let's plot the distribution of t for increasing number of simulations to give us a sense of what would happen if we could do this infinite times. Expected plot may look something similar to the one shown below:
 
-![](sampleplot.png)
+![](images/sampleplot.png)
 
 
 ### STEPS:
@@ -325,7 +325,7 @@ For a one-tailed test, then the p-value is simply equal to the area under the t-
 
 Let's draw a plot to identify the area under curve. Your plot may look similar to the one shown here :
 
-![](AUC.png)
+![](images/AUC.png)
 
 
 ```python
@@ -439,7 +439,7 @@ for e_size in [0.2,0.5,1]:
 ```
 
 For each chosen effect size i.e. .2, .5 and 1, show the effect of sample size on averaged p_value calculated above. An example plot may look like:
-![](p-sample-eff.png)
+![](images/p-sample-eff.png)
 
 
 ```python
@@ -472,7 +472,7 @@ What we see here is that the p-value is a function of the sample size. This mean
 We shall now look at how the p-values depend on effect size. We shall simulate experiments to see the distribution of p-values we get with changing effect sizes (as compared to fixed effect size previously).
 
 Use the effect sizes [0.1, 0.25, 0.5, 0.75] with a sample size N = 100 and number of simulations -  M = 10000. Plot a hoistogram of p_values calculated for each effect size. The output may look similar to:
-![](p_eff.png)
+![](images/p_eff.png)
 
 
 
