@@ -7,10 +7,10 @@ In this lab, you'll run simulations to continue to investigate the relationship 
 
 ## Objectives
 You will be able to:
-* Describe how effect size, sample size and p_value are related to each other. 
+* Describe how effect size, sample size, and p_value are related to each other. 
 * Use Welch's t-test for distributions that do not have a normality assumption.
-* Plot visualisations to confirm the calculations and intuitions towards p_value and effect size. 
-* Explain how with a same effect size, we may see different p_values with increasing number of simulations. 
+* Plot visualizations to confirm the calculations and intuitions towards p_value and effect size. 
+* Explain how with the same effect size, we may see different p_values with an increasing number of simulations. 
 
 ## Philosophical Review
 
@@ -52,7 +52,7 @@ def generate_samples(m1,s1,n1,m2,s2,n2):
 
 ## Running a Simulation
 
-For your first simulation, you're going to investigate how the p-value of an experiment relates to sample size when both samples are from identical underlying distributions. To do this, use your `generate_samples()` function along with the `p_value_welch_ttest()` function defined in the flatiron_stats file. Use sample sizes from 5 to 750. For each sample size, simulate 100 experiments. For each of these experiments, generate 2 samples of the given sample size. Each sample should have a standard deviation of 1. The first sample should have a mean of 5 and the second should have a mean of 5 plus the effect size, you hope to detect. Calculate the corresponding p-values for a Welch's t-test for each of these sample-pairs. Finally, use the p-values to calculate the power of the test. Remember that for all of the simulations where the effect size does not equal zero, the null hypothesis is not true. Store the overall power from the 100 simulations along with the corresponding sample size and effect size. Use varying effect sizes such as [0, 0.01,.1,.2, .5, 1, 2]. Afterwards, you'll then plot power vs sample size for various effect sizes.
+For your first simulation, you're going to investigate how the p-value of an experiment relates to sample size when both samples are from identical underlying distributions. To do this, use your `generate_samples()` function along with the `p_value_welch_ttest()` function defined in the flatiron_stats file. Use sample sizes from 5 to 750. For each sample size, simulate 100 experiments. For each of these experiments, generate 2 samples of the given sample size. Each sample should have a standard deviation of 1. The first sample should have a mean of 5 and the second should have a mean of 5 plus the effect size, you hope to detect. Calculate the corresponding p-values for a Welch's t-test for each of these sample-pairs. Finally, use the p-values to calculate the power of the test. Remember that for all of the simulations where the effect size does not equal zero, the null hypothesis is not true. Store the overall power from the 100 simulations along with the corresponding sample size and effect size. Use varying effect sizes such as [0, 0.01,.1,.2, .5, 1, 2]. Afterward, you'll then plot power vs sample size for various effect sizes.
 
 
 ```python
@@ -82,8 +82,8 @@ Now that you've simulated the data, go ahead and graph it! Label the x-axis samp
 #You code here
 ```
 
-As you can see, it's also typically incredibly difficult (if not impossible) to accuractely detect effect sizes below .1!
+As you can see, it's also typically incredibly difficult (if not impossible) to accurately detect effect sizes below .1!
 
 ## Summary
 
-This lesson summarizes and further builds upon the ideas that we saw in the previous labs. We learnt how p_value can be described as a function of effect size and for a given effect size, the p_value may get lower if we increase the sample size considerably. We also saw how p_value alone can not be used in order to identify some results as truly siginifcant, as this can be achieved when there is not a significant effect size. 
+This lesson summarizes and further builds upon the ideas that we saw in the previous labs. We learned how p_value can be described as a function of effect size and for a given effect size, the p_value may get lower if we increase the sample size considerably. We also saw how p_value alone can not be used in order to identify some results as truly significant, as this can be achieved when there is not a significant effect size. 
