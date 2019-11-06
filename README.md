@@ -7,10 +7,7 @@ In this lab, you'll run simulations to continue to investigate the relationship 
 
 ## Objectives
 You will be able to:
-* Describe how effect size, sample size, and p_value are related to each other. 
-* Use Welch's t-test for distributions that do not have a normality assumption.
-* Plot visualizations to confirm the calculations and intuitions towards p_value and effect size. 
-* Explain how with the same effect size, we may see different p_values with an increasing number of simulations. 
+* Run a simulation that creates a visualization to demonstrate the interaction between power, sample size, and effect size
 
 ## Philosophical review
 
@@ -98,7 +95,7 @@ plt.legend(title='Effect Size', loc=(1, 0.5))
 
 
 
-    <matplotlib.legend.Legend at 0x1a21665a58>
+    <matplotlib.legend.Legend at 0x1a17892400>
 
 
 
