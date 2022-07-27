@@ -1,4 +1,3 @@
-
 # Effect Size, P-Values and Power - Lab
 
 ## Introduction 
@@ -6,7 +5,9 @@
 In this lab, you'll run simulations to continue to investigate the relationship between effect size, p-values, power, and sample size!
 
 ## Objectives
+
 You will be able to:
+
 * Run a simulation that creates a visualization to demonstrate the interaction between power, sample size, and effect size
 
 ## Philosophical review
